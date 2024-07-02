@@ -1,0 +1,10 @@
+# ninja log v5
+6	848	7410120849908408	CMakeFiles/kv_store.dir/main.cpp.obj	85e0706fa3fd9ef1
+849	1049	7410120851880421	kv_store.exe	372f7c58bc5a5222
+2	1417	7410687616951861	CMakeFiles/kv_store.dir/stress_test.cpp.obj	84f8b60d0b00664c
+6	1440	7410690064149118	CMakeFiles/kv_store.dir/stress_test.cpp.obj	84f8b60d0b00664c
+6	1435	7410702518930642	CMakeFiles/kv_store.dir/stress_test.cpp.obj	84f8b60d0b00664c
+1436	1622	7410702520739116	kv_store.exe	22f06c63cc42f4c8
+6	2626	7415394395485908	CMakeFiles/kv_store.dir/stress_test.cpp.obj	84f8b60d0b00664c
+5	2390	7415394597579233	CMakeFiles/kv_store.dir/stress_test.cpp.obj	84f8b60d0b00664c
+5	2327	7415396048269315	CMakeFiles/kv_store.dir/stress_test.cpp.obj	84f8b60d0b00664c
