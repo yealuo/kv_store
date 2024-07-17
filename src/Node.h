@@ -6,6 +6,7 @@
 #define KV_STORE_NODE_H
 
 #include <algorithm>
+#include <chrono>
 
 template<typename K, typename V>
 class Node {
@@ -25,6 +26,7 @@ public:
 public:
     int node_level;
     Node<K, V> **forward;
+    std::chrono::time_point<std::chrono::steady_clock> create_time, last_access_time;
 
 private:
     K key;
@@ -32,7 +34,10 @@ private:
 };
 
 template<typename K, typename V>
-Node<K, V>::Node(const K k, const V v, const int level):key(k), value(v), node_level(level), forward(nullptr) {
+Node<K, V>::Node(const K k, const V v, const int level):key(k), value(v), node_level(level),
+                                                        forward(nullptr),
+                                                        create_time(std::chrono::steady_clock::now()),
+                                                        last_access_time(std::chrono::steady_clock::now()) {
     forward = new Node<K, V> *[level + 1];
     std::fill(forward, forward + level + 1, nullptr);
 }

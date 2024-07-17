@@ -1,3 +1,4 @@
-D:/Documents/Code/CLion/kv_store/cmake-build-debug/CMakeFiles/kv_store.dir
+D:/Documents/Code/CLion/kv_store/cmake-build-debug/CMakeFiles/stress_test.dir
+D:/Documents/Code/CLion/kv_store/cmake-build-debug/CMakeFiles/function_test.dir
 D:/Documents/Code/CLion/kv_store/cmake-build-debug/CMakeFiles/edit_cache.dir
 D:/Documents/Code/CLion/kv_store/cmake-build-debug/CMakeFiles/rebuild_cache.dir

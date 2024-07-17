@@ -12,18 +12,18 @@
 #include <random>
 #include <iostream>
 #include <mutex>
+#include <thread>
 
 #define STORE_FILE "..\\data\\data"
 
 template<typename K, typename V>
 class SkipList {
 public:
-    SkipList(int);
+    SkipList(int max_l, uint32_t ep_time = 60);
 
     ~SkipList();
 
     int get_random_level();             //获取节点随机层级
-    Node<K, V> *create_node(K, V, int);    //节点创建
     bool search_element(K);             //搜索节点
     int insert_element(K, V);            //插入节点
     void delete_element(K);             //删除节点
@@ -41,12 +41,21 @@ private:
     std::ifstream _file_reader; //文件读取器
     std::default_random_engine e;
     std::uniform_int_distribution<int> gen;
-    std::mutex mtx;
+    std::mutex mtx, mtx2;
+    std::chrono::seconds expiration_time;   //节点过期时间
+    std::thread cleanup_thread;
+    bool is_stop;                          //指示清理线程是否停止
+
+    Node<K, V> *create_node(K, V, int);    //节点创建
+    void lru_cleanup();
 };
 
 template<typename K, typename V>
-SkipList<K, V>::SkipList(int max_l):_max_level(max_l), _skip_list_level(0), _element_count(0),
-                                    e(std::random_device{}()), gen(0, 1) {
+SkipList<K, V>::SkipList(int max_l, uint32_t ep_time):_max_level(max_l), _skip_list_level(0), _element_count(0),
+                                                      e(std::random_device{}()), gen(0, 1), expiration_time(ep_time),
+                                                      cleanup_thread([this]() { lru_cleanup(); }),
+                                                      is_stop(
+                                                              false) {
     K k{};  //默认初始化
     V v{};  //默认初始化
     _header = new Node<K, V>(k, v, _max_level);
@@ -61,6 +70,13 @@ SkipList<K, V>::~SkipList() {
         if (curt != nullptr)
             next = curt->forward[0];
     }
+
+    {
+        std::lock_guard<std::mutex> lock(mtx2);
+        is_stop = true;
+    }
+
+    cleanup_thread.join();
 }
 
 template<typename K, typename V>
@@ -79,6 +95,8 @@ Node<K, V> *SkipList<K, V>::create_node(K k, V v, int level) {
 
 template<typename K, typename V>
 bool SkipList<K, V>::search_element(K key) {
+    std::lock_guard<std::mutex> lock(mtx);
+
     auto curt = _header;
     //从跳表的当前最高层开始搜索
     for (int i = _skip_list_level; i >= 0; --i) {
@@ -88,8 +106,10 @@ bool SkipList<K, V>::search_element(K key) {
     }
 
     curt = curt->forward[0];
-    if (curt && curt->get_key() == key)
+    if (curt && curt->get_key() == key) {
+        curt->last_access_time = std::chrono::steady_clock::now();
         return true;
+    }
 
     return false;
 }
@@ -150,6 +170,7 @@ void SkipList<K, V>::delete_element(K key) {
     Node<K, V> *update[_max_level + 1];
     std::fill(update, update + _max_level + 1, nullptr);
 
+
     mtx.lock();
     for (int i = _skip_list_level; i >= 0; --i) {
         while (curt->forward[i] && curt->forward[i]->get_key() < key)
@@ -180,6 +201,11 @@ void SkipList<K, V>::delete_element(K key) {
 
 template<typename K, typename V>
 void SkipList<K, V>::display_list() {
+    if (_element_count == 0) {
+        std::cout << "SkipList is empty!" << std::endl;
+        return;
+    }
+
     for (int i = _skip_list_level; i >= 0; --i) {
         auto node = _header->forward[i];
 
@@ -228,5 +254,55 @@ void SkipList<K, V>::load_file() {
 
 template<typename K, typename V>
 int SkipList<K, V>::size() { return _element_count; }
+
+template<typename K, typename V>
+void SkipList<K, V>::lru_cleanup() {
+    while (true) {
+        {
+            std::lock_guard<std::mutex> lock(mtx2);
+            if (is_stop)
+                break;
+        }
+
+        auto now = std::chrono::steady_clock::now();
+        {
+            std::lock_guard<std::mutex> lock(mtx);
+            auto prev = _header;
+            auto curt = _header->forward[0];
+            while (curt != nullptr) {
+                if (now - curt->last_access_time > expiration_time) {
+                    Node<K, V> *update[curt->node_level + 1];
+                    std::fill(update, update + curt->node_level + 1, nullptr);
+
+                    for (int i = curt->node_level; i >= 0; --i) {
+                        auto temp = _header;
+                        while (temp->forward[i] != curt)
+                            temp = temp->forward[i];
+
+                        update[i] = temp;
+                    }
+
+                    for (int i = 0; i <= curt->node_level; ++i) {
+                        update[i]->forward[i] = curt->forward[i];
+                        curt->forward[i] = nullptr;
+                    }
+
+                    delete curt;
+                    --_element_count;
+
+                    while (_skip_list_level > 0 && _header->forward[_skip_list_level] == nullptr)
+                        --_skip_list_level;
+
+                    curt = prev->forward[0];
+                } else {
+                    prev = curt;
+                    curt = curt->forward[0];
+                }
+            }
+        }
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+}
 
 #endif //KV_STORE_SKIPLIST_H

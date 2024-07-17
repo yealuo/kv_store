@@ -41,37 +41,70 @@ include CMakeFiles/rules.ninja
 
 cmake_ninja_workdir = D$:/Documents/Code/CLion/kv_store/cmake-build-debug/
 # =============================================================================
-# Object build statements for EXECUTABLE target kv_store
+# Object build statements for EXECUTABLE target stress_test
 
 
 #############################################
-# Order-only phony target for kv_store
+# Order-only phony target for stress_test
 
-build cmake_object_order_depends_target_kv_store: phony || CMakeFiles/kv_store.dir
+build cmake_object_order_depends_target_stress_test: phony || CMakeFiles/stress_test.dir
 
-build CMakeFiles/kv_store.dir/stress_test.cpp.obj: CXX_COMPILER__kv_store_unscanned_Debug D$:/Documents/Code/CLion/kv_store/stress_test.cpp || cmake_object_order_depends_target_kv_store
-  DEP_FILE = CMakeFiles\kv_store.dir\stress_test.cpp.obj.d
+build CMakeFiles/stress_test.dir/stress_test.cpp.obj: CXX_COMPILER__stress_test_unscanned_Debug D$:/Documents/Code/CLion/kv_store/stress_test.cpp || cmake_object_order_depends_target_stress_test
+  DEP_FILE = CMakeFiles\stress_test.dir\stress_test.cpp.obj.d
   FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
-  OBJECT_DIR = CMakeFiles\kv_store.dir
-  OBJECT_FILE_DIR = CMakeFiles\kv_store.dir
+  OBJECT_DIR = CMakeFiles\stress_test.dir
+  OBJECT_FILE_DIR = CMakeFiles\stress_test.dir
 
 
 # =============================================================================
-# Link build statements for EXECUTABLE target kv_store
+# Link build statements for EXECUTABLE target stress_test
 
 
 #############################################
-# Link the executable kv_store.exe
+# Link the executable stress_test.exe
 
-build kv_store.exe: CXX_EXECUTABLE_LINKER__kv_store_Debug CMakeFiles/kv_store.dir/stress_test.cpp.obj
+build stress_test.exe: CXX_EXECUTABLE_LINKER__stress_test_Debug CMakeFiles/stress_test.dir/stress_test.cpp.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
-  OBJECT_DIR = CMakeFiles\kv_store.dir
+  OBJECT_DIR = CMakeFiles\stress_test.dir
   POST_BUILD = cd .
   PRE_LINK = cd .
-  TARGET_FILE = kv_store.exe
-  TARGET_IMPLIB = libkv_store.dll.a
-  TARGET_PDB = kv_store.exe.dbg
+  TARGET_FILE = stress_test.exe
+  TARGET_IMPLIB = libstress_test.dll.a
+  TARGET_PDB = stress_test.exe.dbg
+
+# =============================================================================
+# Object build statements for EXECUTABLE target function_test
+
+
+#############################################
+# Order-only phony target for function_test
+
+build cmake_object_order_depends_target_function_test: phony || CMakeFiles/function_test.dir
+
+build CMakeFiles/function_test.dir/function_test.cpp.obj: CXX_COMPILER__function_test_unscanned_Debug D$:/Documents/Code/CLion/kv_store/function_test.cpp || cmake_object_order_depends_target_function_test
+  DEP_FILE = CMakeFiles\function_test.dir\function_test.cpp.obj.d
+  FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\function_test.dir
+  OBJECT_FILE_DIR = CMakeFiles\function_test.dir
+
+
+# =============================================================================
+# Link build statements for EXECUTABLE target function_test
+
+
+#############################################
+# Link the executable function_test.exe
+
+build function_test.exe: CXX_EXECUTABLE_LINKER__function_test_Debug CMakeFiles/function_test.dir/function_test.cpp.obj
+  FLAGS = -g
+  LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
+  OBJECT_DIR = CMakeFiles\function_test.dir
+  POST_BUILD = cd .
+  PRE_LINK = cd .
+  TARGET_FILE = function_test.exe
+  TARGET_IMPLIB = libfunction_test.dll.a
+  TARGET_PDB = function_test.exe.dbg
 
 
 #############################################
@@ -99,7 +132,9 @@ build rebuild_cache: phony CMakeFiles/rebuild_cache.util
 # =============================================================================
 # Target aliases.
 
-build kv_store: phony kv_store.exe
+build function_test: phony function_test.exe
+
+build stress_test: phony stress_test.exe
 
 # =============================================================================
 # Folder targets.
@@ -109,7 +144,7 @@ build kv_store: phony kv_store.exe
 #############################################
 # Folder: D:/Documents/Code/CLion/kv_store/cmake-build-debug
 
-build all: phony kv_store.exe
+build all: phony stress_test.exe function_test.exe
 
 # =============================================================================
 # Built-in targets

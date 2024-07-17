@@ -5,4 +5,5 @@ set(CMAKE_CXX_STANDARD 20)
 
 file(GLOB SOURCE "src/*.*")
 
-add_executable(kv_store stress_test.cpp ${SOURCE})
+add_executable(stress_test stress_test.cpp ${SOURCE})
+add_executable(function_test function_test.cpp ${SOURCE})
